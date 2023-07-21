@@ -1,0 +1,18 @@
+{
+  "name": "idkwtfwearedoing",
+  "version": "1.0.0",
+  "description": "Yeah i really don't know tf we are doing but it'll work trust me ;)",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "winters and lucifer",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "nodemon": "^3.0.1",
+    "sqlite3": "^5.1.6"
+  }
+}
