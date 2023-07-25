@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <title> Profile </title>
+        <h1> <%= username %> </h1>
+    </head>
+    <body>
+        <h1> Blogs </h1>
+        <div>
+            <%  if (row) { %>
+              <% for (let i = 0; i < 10; i++) { %>
+                <% if (row[i]) { %>
+                  <h2><%= row[i].name %></h2><br>
+                  <p><%= row[i].content %></p>
+                <% } else { %>
+                  <% break; %>
+                <% } %>
+              <% } %>
+            <% } else { %> 
+              <p> You have no Blogs </p>
+              <% } %>
+            <br>
+        </div>
+        <div>
+          <h2>
+            Add Blogs
+          </h2>
+          <form action="/blog" method="post" >
+            <label for="title">Title:</label><br>
+            <input type="text" id="title" name="title" required><br><br>
+            <label for="content">Content:</label><br>
+            <textarea id="content" name="content" rows="8" cols="80" required></textarea><br><br>
+            <input type="submit" value="Submit">
+        </form>
+        </div>
+    </body>
+</html>

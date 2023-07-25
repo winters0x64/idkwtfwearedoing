@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const sqlite3 = require('sqlite3').verbose();
 const port = 1337;
+const ejs = require('ejs');
 
 // Middlewares
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -14,6 +15,7 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
+app.set('view engine', 'ejs');
 
 // Database stuff
 const db = new sqlite3.Database('database.db', (err) => {
@@ -23,12 +25,22 @@ const db = new sqlite3.Database('database.db', (err) => {
       console.log('Connected to the SQLite database.');
     }
 });
+// Need table for blog too
 db.run(`
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL,
     password TEXT NOT NULL
-  )
+  );
+`);
+db.run(`
+  CREATE TABLE IF NOT EXISTS blog (
+  id INTEGER,
+  blog_id INTEGER,
+  name TEXT NOT NULL,
+  content TEXT NOT NULL,
+  PRIMARY KEY (id,blog_id)
+  );
 `);
 
 db.run('INSERT INTO users (username, password) VALUES (?, ?)', ["Bob", "Bob"], function (err) {
@@ -46,6 +58,10 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/login.html');
 });
 // Register route
+app.get('/register', (req, res) => {
+  res.sendFile(__dirname + '/public/register.html');
+});
+
 app.post('/register', (req, res) => {
     const { username, password } = req.body;
     console.log(`Received data: username - ${username}, password - ${password}`);
@@ -56,8 +72,7 @@ app.post('/register', (req, res) => {
         } 
         else {
           console.log(`User "${username}" registered successfully.`);
-          req.session.username = username;
-          res.redirect('/user');
+          res.redirect('/login');
         }
       });
 });
@@ -69,7 +84,7 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
     console.log(`Received login attempt: username - ${username}, password - ${password}`);
-    db.get('SELECT username FROM users WHERE username = ? AND password = ?', [username, password], (err, row) => {
+    db.get('SELECT id,username FROM users WHERE username = ? AND password = ?', [username, password], (err, row) => {
       if (err) {
         console.error('Error querying the database:', err.message);
         res.status(500).send('Error querying the database.');
@@ -77,6 +92,7 @@ app.post('/login', (req, res) => {
       else {
         if (row) {
           req.session.username = row.username;
+          req.session.id = row.id;
           res.redirect('/user');
         } 
         else {
@@ -86,10 +102,38 @@ app.post('/login', (req, res) => {
     });
 });
 
+
 // Start working from here
 app.get('/user', (req, res) => {
-    const username = req.session.username || 'Guest';
-    res.send(`Current user: ${username}`);
+  if(!req.session.id && !req.session.username){
+    res.redirect('/login');
+  } else {
+    const username = req.session.username ;
+    const id = req.session.id;
+    db.all('SELECT * FROM blog WHERE id = ?',[id],(err,row) => {
+      if(err) {
+      res.render('profile', { username : username,row:row });
+    } else {
+      res.render('profile', { username : username,row:row});
+    }
+    });
+  }
+  });
+
+app.post('/blog',(req,res) => {
+  const id = req.session.id
+  const {title,content} = req.body
+  console.log(`The Blog is ${title} and ${content}`)
+  db.run(`INSERT INTO blog (id,name,content) VALUES (?,?,?)`,[id,title,content],(err,row) => {
+    if (err) {
+      console.error('Error inserting blog', err.message);
+      res.status(500).send('Error inserting blog.');
+    } 
+    else {
+      console.log(`Blog written successful`);
+      res.redirect('/user');
+    }
+  });
 });
 
 app.use(express.static('public'));
