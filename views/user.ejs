@@ -1,0 +1,32 @@
+<!-- user.ejs -->
+
+<html>
+  <head>
+    <title>User</title>
+    <h1><%= username %></h1>
+  </head>
+  <body>
+    <h1>Blogs</h1>
+    <div>
+      <% if (row && row.length > 0) { %>
+        <% for (let i = 0; i < 10; i++) { %>
+          <% if (row[i]) { %>
+            <h2><%= row[i].name %></h2><br>
+            <p><%- row[i].content %></p>
+          <% } else { %>
+            <% break; %>
+          <% } %>
+        <% } %>
+      <% } else { %> 
+        <p><%= username %> has no Blogs</p>
+      <% } %>
+    </div>
+    <div>
+      <h2>Followers: <%= data.followers %></h2>
+      <h2>Following: <%= data.following %></h2>
+    </div>
+    <form method="post" action="/follow/<%= username %>">
+        <button id="but" type="submit">Follow <%= username %></button>
+      </form>
+  </body>
+</html>

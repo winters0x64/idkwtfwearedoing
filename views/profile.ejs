@@ -4,6 +4,10 @@
         <h1> <%= username %> </h1>
     </head>
     <body>
+      <div>
+        <h2>Followers: <%= data.followers %></h2>
+        <h2>Following: <%= data.following %></h2>
+      </div>
         <h1> Blogs </h1>
         <div>
             <%  if (row) { %>
@@ -24,7 +28,7 @@
           <h2>
             Add Blogs
           </h2>
-          <form action="/blog" method="post" >
+          <form action="/blog/<%= username %>" method="post" >
             <label for="title">Title:</label><br>
             <input type="text" id="title" name="title" required><br><br>
             <label for="content">Content:</label><br>
