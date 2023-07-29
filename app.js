@@ -45,6 +45,12 @@ db.run(`
   FOREIGN KEY (id) REFERENCES users(id)
   );
 `);
+db.run(`
+CREATE TABLE IF NOT EXISTS reach (
+  follower INTEGER,
+  followed INTEGER,
+  PRIMARY KEY (follower,followed)
+)`)
 })
 
 /* database.then(
@@ -205,24 +211,53 @@ app.post('/follow/:username', (req, res) => {
               res.status(404).send('User not found.');
             } else {
               // Update the follower and following counts for both users
+
               const targetUserId = targetUserRow.id
               const loggedInUserId = loggedInUserRow.id
 
-              db.run('UPDATE users SET followers = followers + 1 WHERE id = ?', [targetUserId], (err) => {
-                if (err) {
-                  console.error('Error updating follower count:', err.message);
-                }
-              });
+              db.all('SELECT * from reach where follower = ?',[loggedInUserId],(err,data) => {
+                
+                if(err){
+                  console.error('Error Quering the reach database:', err.message);
+                } else {
+                  let alreadyFollowed = false;
+                  for (let j = 0; j < data.length; j++) {
+                    console.log(data[j].followed)
+                    if (data[j].followed === targetUserId) {
+                      console.log('already followed')
+                      alreadyFollowed = true;
+                      break;
+                    }
+                  }
 
-              db.run('UPDATE users SET following = following + 1 WHERE id = ?', [loggedInUserId], (err) => {
-                if (err) {
-                  console.error('Error updating following count:', err.message);
+                  if (alreadyFollowed) {
+                    res.send('Already Followed');
+                  } else {
+                    // If not already followed, proceed to update the database and counts
+                    db.run('INSERT INTO reach (follower, followed) VALUES (?, ?)', [loggedInUserId, targetUserId], (err) => {
+                      if (err) {
+                        console.error('Error Updating the reach table:', err.message);
+                      }
+                    });
+                  
+                  db.run('UPDATE users SET followers = followers + 1 WHERE id = ?', [targetUserId], (err) => {
+                    if (err) {
+                      console.error('Error updating follower count:', err.message);
+                    }
+                  });
+    
+                  db.run('UPDATE users SET following = following + 1 WHERE id = ?', [loggedInUserId], (err) => {
+                    if (err) {
+                      console.error('Error updating following count:', err.message);
+                    }
+                  });
                 }
-              });
+              }
 
               res.redirect(`/user/${targetUsername}`);
-            }
+            })
           }
+        }
         });
       }
     });
