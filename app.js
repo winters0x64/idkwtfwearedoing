@@ -232,6 +232,7 @@ app.post('/follow/:username', (req, res) => {
 
                   if (alreadyFollowed) {
                     res.send('Already Followed');
+                    return;
                   } else {
                     // If not already followed, proceed to update the database and counts
                     db.run('INSERT INTO reach (follower, followed) VALUES (?, ?)', [loggedInUserId, targetUserId], (err) => {
