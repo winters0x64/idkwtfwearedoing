@@ -81,19 +81,33 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-    const { username, password } = req.body;
-    console.log(`Received data: username - ${username}, password - ${password}`);
+  const { username, password } = req.body;
+
+  // Check if the username already exists in the database
+  db.get('SELECT * FROM users WHERE username = ?', [username], (err, row) => {
+    if (err) {
+      console.error('Error checking username in database:', err.message);
+      return res.status(500).send('Error registering user.');
+    }
+
+    if (row) {
+      // Username already exists
+      return res.status(409).send('Username already taken.');
+    }
+
+    // Username is not taken, proceed with registration
     db.run('INSERT INTO users (username, password) VALUES (?, ?)', [username, password], function (err) {
-        if (err) {
-          console.error('Error inserting data:', err.message);
-          res.status(500).send('Error registering user.');
-        } 
-        else {
-          console.log(`User "${username}" registered successfully.`);
-          res.redirect('/login');
-        }
-      });
+      if (err) {
+        console.error('Error inserting data:', err.message);
+        return res.status(500).send('Error registering user.');
+      } else {
+        console.log(`User "${username}" registered successfully.`);
+        return res.redirect('/login');
+      }
+    });
+  });
 });
+
 // Login route
 app.get('/login', (req, res) => {
     res.sendFile(__dirname + '/public/login.html');
@@ -173,6 +187,26 @@ app.get('/profile/:username', (req, res) => {
       }
     })
   }
+});
+
+
+// Endpoint to handle user search and display search results
+app.get('/search', (req, res) => {
+  if(!req.session.username){
+    res.send("login first")
+  }
+  const query = req.query.q;
+  const searchQuery = `%${query}%`; // Adding wildcards for partial search
+
+  const searchQuerySQL = 'SELECT * FROM users WHERE username LIKE ?';
+
+  db.all(searchQuerySQL, [searchQuery], (err, rows) => {
+    if (err) {
+      res.status(500).send('Error searching for users');
+    } else {
+      res.render('search', { query, searchResults: rows });
+    }
+  });
 });
 
 app.post('/follow/:username', (req, res) => {
