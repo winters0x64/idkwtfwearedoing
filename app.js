@@ -285,7 +285,7 @@ app.get('/feed',(req,res) => {
           res.status(500).send('Error Loading the users.');
         } 
         else {
-          res.render('feed', { user :user,row:row});
+          res.render('feed', { user :user,row:row,usern:req.session.username});
         }
       })
     }

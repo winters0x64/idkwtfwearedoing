@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -6,69 +7,176 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <style>
         body {
-            background-color: #2894ff;
+            background-color: #141d26;
+            color: #ffffff;
             padding-top: 30px;
         }
 
         h1 {
             text-align: center;
             margin-bottom: 20px;
+            font-size: 32px;
+            color: #1da1f2;
         }
 
         h2 {
             margin-bottom: 10px;
+            font-size: 24px;
+            color: #1da1f2;
         }
 
-        .profile-info {
+        .profile-info,
+        .add-blogs,
+        .blogs {
             padding: 20px;
-            border: 1px solid #ddd;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #37444c;
+            background-color: #192734;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            max-height: 2600px; /* Limit the height of the blog container */
+            overflow-y: auto; /* Add scrollbar when content overflows */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* Internet Explorer 10+ */
+        }
+
+        .profile-image {
+            text-align: center;
             margin-bottom: 20px;
         }
 
-        .blogs {
-            padding: 20px;
+        ::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
+
+        .profile-image img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .blogs h1 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: #1da1f2;
         }
 
         .blogs h2 {
             margin-bottom: 5px;
+            font-size: 24px;
+            color: #ffffff;
+            white-space: nowrap; /* Prevent h2 text from wrapping */
+            overflow: hidden; /* Hide any overflowing text */
+            text-overflow: ellipsis; /* Add ellipsis (...) to indicate truncated text */
         }
 
         .blogs p {
             margin-bottom: 20px;
+            font-size: 18px;
+            color: #ffffff;
+            white-space: normal; /* Allow p text to wrap within the container */
+            overflow-wrap: break-word; /* Break words to fit within the container */
         }
 
-        .add-blogs {
-            padding: 20px;
-            border: 1px solid #ddd;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        .add-blogs h2 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: #1da1f2;
         }
 
         .add-blogs label {
             margin-bottom: 5px;
+            font-size: 18px;
+            color: #ffffff;
+        }
+
+        .form-control {
+            background-color: #243447;
+            border-color: #37444c;
+            color: #ffffff;
+        }
+
+        .add-blogs button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #1da1f2;
+            border: none;
+            border-radius: 5px;
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        .add-blogs button:hover {
+            background-color: #0c7dbc;
+        }
+
+        .back-button {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-button a {
+            font-size: 18px;
+            color: #ffffff;
+            text-decoration: none;
+            background-color: #1da1f2;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        .back-button a:hover {
+            background-color: #0c7dbc;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .profile-info,
+            .add-blogs,
+            .blogs {
+                width: 100%;
+                float: none;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="row">
-            <div class="col-md-12">
-                <h1><%= username %></h1>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="profile-info">
+                    <div class="profile-image">
+                        <img src="https://source.unsplash.com/random/150x150" alt="Profile Image">
+                    </div>
+                    <h1>@<%= username %></h1>
                     <h2>Followers: <%= data.followers %></h2>
                     <h2>Following: <%= data.following %></h2>
                     <!-- Add any other profile information here -->
                 </div>
+                <div class="back-button">
+                    <a href="/feed">Back to Feed</a>
+                </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
+                <div class="add-blogs">
+                    <h2>Add Blogs</h2>
+                    <form action="/blog/<%= username %>" method="post">
+                        <div class="mb-3">
+                            <label for="title">Title:</label>
+                            <input type="text" id="title" name="title" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="content">Content:</label>
+                            <textarea id="content" name="content" class="form-control" rows="8" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-4">
                 <div class="blogs">
                     <h1>Blogs</h1>
                     <% if (row) { %>
@@ -86,24 +194,7 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="add-blogs">
-                    <h2>Add Blogs</h2>
-                    <form action="/blog/<%= username %>" method="post">
-                        <div class="mb-3">
-                            <label for="title">Title:</label>
-                            <input type="text" id="title" name="title" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="content">Content:</label>
-                            <textarea id="content" name="content" class="form-control" rows="8" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+        <div class="clearfix"></div>
     </div>
 </body>
 </html>
