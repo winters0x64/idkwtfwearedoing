@@ -1,32 +1,79 @@
 <!-- user.ejs -->
-
 <html>
-  <head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User</title>
-    <h1><%= username %></h1>
-  </head>
-  <body>
-    <h1>Blogs</h1>
-    <div>
-      <% if (row && row.length > 0) { %>
-        <% for (let i = 0; i < 10; i++) { %>
-          <% if (row[i]) { %>
-            <h2><%= row[i].name %></h2><br>
-            <p><%- row[i].content %></p>
-          <% } else { %>
-            <% break; %>
-          <% } %>
-        <% } %>
-      <% } else { %> 
-        <p><%= username %> has no Blogs</p>
-      <% } %>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #2894ff;;
+            padding-top: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        .blogs {
+            padding: 20px;
+        }
+
+        .blogs h2 {
+            margin-bottom: 5px;
+        }
+
+        .blogs p {
+            margin-bottom: 20px;
+        }
+
+        .follow-button {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><%= username %></h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="blogs">
+                    <h1>Blogs</h1>
+                    <% if (row && row.length > 0) { %>
+                        <% for (let i = 0; i < 10; i++) { %>
+                            <% if (row[i]) { %>
+                                <h2><%= row[i].name %></h2>
+                                <p><%- row[i].content %></p>
+                            <% } else { %>
+                                <% break; %>
+                            <% } %>
+                        <% } %>
+                    <% } else { %> 
+                        <p><%= username %> has no Blogs</p>
+                    <% } %>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="blogs">
+                    <h2>Followers: <%= data.followers %></h2>
+                    <h2>Following: <%= data.following %></h2>
+                </div>
+                <div class="follow-button">
+                    <form method="post" action="/follow/<%= username %>">
+                        <button type="submit" class="btn btn-primary">Follow <%= username %></button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    <div>
-      <h2>Followers: <%= data.followers %></h2>
-      <h2>Following: <%= data.following %></h2>
-    </div>
-    <form method="post" action="/follow/<%= username %>">
-        <button id="but" type="submit">Follow <%= username %></button>
-      </form>
-  </body>
+</body>
 </html>

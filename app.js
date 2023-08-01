@@ -4,7 +4,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const sqlite3 = require('sqlite3').verbose();
-const port = 1337;
+const port = 3000;
 const ejs = require('ejs');
 
 // Middlewares
@@ -52,18 +52,6 @@ CREATE TABLE IF NOT EXISTS reach (
   PRIMARY KEY (follower,followed)
 )`)
 })
-
-/* database.then(
-  function(value) {
-  db.run('INSERT INTO users (username, password) VALUES (?, ?)', ["Bob", "Bob"], function (err) {
-    if (err) {
-      console.error('Error inserting data:', err.message);
-    } 
-    else {
-      console.log(`User "Bob" registered successfully.`);
-    }
-});}
-) */
 
 db.get('select id from users where username = ?',["bob"],function(err,data) {
   if (err) {

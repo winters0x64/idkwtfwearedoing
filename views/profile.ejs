@@ -1,40 +1,109 @@
 <html>
-    <head>
-        <title> Profile </title>
-        <h1> <%= username %> </h1>
-    </head>
-    <body>
-      <div>
-        <h2>Followers: <%= data.followers %></h2>
-        <h2>Following: <%= data.following %></h2>
-      </div>
-        <h1> Blogs </h1>
-        <div>
-            <%  if (row) { %>
-              <% for (let i = 0; i < 10; i++) { %>
-                <% if (row[i]) { %>
-                  <h2><%= row[i].name %></h2><br>
-                  <p><%= row[i].content %></p>
-                <% } else { %>
-                  <% break; %>
-                <% } %>
-              <% } %>
-            <% } else { %> 
-              <p> You have no Blogs </p>
-              <% } %>
-            <br>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #2894ff;
+            padding-top: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        .profile-info {
+            padding: 20px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .blogs {
+            padding: 20px;
+        }
+
+        .blogs h2 {
+            margin-bottom: 5px;
+        }
+
+        .blogs p {
+            margin-bottom: 20px;
+        }
+
+        .add-blogs {
+            padding: 20px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .add-blogs label {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1><%= username %></h1>
+            </div>
         </div>
-        <div>
-          <h2>
-            Add Blogs
-          </h2>
-          <form action="/blog/<%= username %>" method="post" >
-            <label for="title">Title:</label><br>
-            <input type="text" id="title" name="title" required><br><br>
-            <label for="content">Content:</label><br>
-            <textarea id="content" name="content" rows="8" cols="80" required></textarea><br><br>
-            <input type="submit" value="Submit">
-        </form>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="profile-info">
+                    <h2>Followers: <%= data.followers %></h2>
+                    <h2>Following: <%= data.following %></h2>
+                    <!-- Add any other profile information here -->
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="blogs">
+                    <h1>Blogs</h1>
+                    <% if (row) { %>
+                        <% for (let i = 0; i < 10; i++) { %>
+                            <% if (row[i]) { %>
+                                <h2><%= row[i].name %></h2>
+                                <p><%= row[i].content %></p>
+                            <% } else { %>
+                                <% break; %>
+                            <% } %>
+                        <% } %>
+                    <% } else { %> 
+                        <p>You have no Blogs</p>
+                    <% } %>
+                </div>
+            </div>
         </div>
-    </body>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="add-blogs">
+                    <h2>Add Blogs</h2>
+                    <form action="/blog/<%= username %>" method="post">
+                        <div class="mb-3">
+                            <label for="title">Title:</label>
+                            <input type="text" id="title" name="title" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="content">Content:</label>
+                            <textarea id="content" name="content" class="form-control" rows="8" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
 </html>
